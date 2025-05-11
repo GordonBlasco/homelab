@@ -3,7 +3,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers/features/neovim:1": {}
+    "ghcr.io/devcontainers-extra/features/neovim-apt-get:1": {}
   },
   "onCreateCommand": "sudo chsh -s /usr/bin/zsh $USER",
   "settings": {
