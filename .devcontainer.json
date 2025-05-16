@@ -3,16 +3,12 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers-extra/features/neovim-apt-get:1": {}
+    "ghcr.io/devcontainers-contrib/features/direnv:1": {},
+    "ghcr.io/kreemer/features/stow:1": {}
   },
-  "onCreateCommand": "sudo chsh -s /usr/bin/zsh $USER",
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    "terminal.integrated.profiles.linux": {
-      "zsh": {
-        "path": "/usr/bin/zsh"
-      }
-    }
-  },
+  "onCreateCommand": "sudo apt-get update && sudo apt-get install -y wget git ninja-build gettext cmake unzip curl build-essential && git clone https://github.com/neovim/neovim.git /tmp/nvim && cd /tmp/nvim && git checkout stable && make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install && sudo chsh -s /usr/bin/zsh $USER",
+  "postCreateCommand": "echo 'eval \"$(direnv hook zsh)\"' >> ~/.zshrc && direnv allow /workspaces/homelab",
+  "mounts": [
+    "source=${localWorkspaceFolder}/.envrc,target=/workspaces/homelab/.envrc,type=bind,consistency=cached"
+  ]
 }
-   
