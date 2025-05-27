@@ -28,3 +28,9 @@ spec:
   values:
     grafana:
       adminPassword: runitest
+      ingress: 
+        enabled: true
+        ingressClassName: traefik
+        hosts: 
+          - grafana.blascolabs.com
+        tls: []
