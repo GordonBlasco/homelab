@@ -3,7 +3,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
-    "ghcr.io/devcontainers-contrib/features/direnv:1": {},
+    "ghcr.io/devcontainers-extra/features/direnv:1": {},
     "ghcr.io/kreemer/features/stow:1": {}
   },
   "onCreateCommand": "sudo apt-get update && sudo apt-get install -y wget git ninja-build gettext cmake unzip curl build-essential && git clone https://github.com/neovim/neovim.git /tmp/nvim && cd /tmp/nvim && git checkout stable && make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install && sudo chsh -s /usr/bin/zsh $USER",
