@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audiobookshelf-configmap
+data:
+  # Pass port as a string because it is being used as an environment variable
+  PORT: "3005"

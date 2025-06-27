@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: audiobookshelf
+spec:
+  ports:
+    - port: 3005
+  selector:
+    app: audiobookshelf
+  type: ClusterIP
