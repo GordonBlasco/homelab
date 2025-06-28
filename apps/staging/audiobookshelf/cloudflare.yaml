@@ -76,7 +76,7 @@ data:
     no-autoupdate: true
 
     ingress:
-    - hostname: audiobooks.blascolab.com
+    - hostname: audiobookshelf.blascolab.com
       service: http://audiobookshelf:3005
 
     # This rule sends traffic to the built-in hello-world HTTP server. This can help debug connectivity
