@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: audiobookshelf
 resources:
   - ../../base/audiobookshelf/
+  - secret.yaml
