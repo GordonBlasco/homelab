@@ -32,8 +32,8 @@ spec:
         enabled: true
         ingressClassName: traefik
         hosts: 
-          - grafana.blascolabs.com
+          - grafana.blascolab.com
         tls: 
           - secretName: grafana-tls-secret
             hosts: 
-              - grafana.blascolabs.com
+              - grafana.blascolab.com
