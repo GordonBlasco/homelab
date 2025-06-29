@@ -23,7 +23,7 @@ spec:
                 name: homepage-configmap
 
           ports:
-            - containerPort: 3005
+            - containerPort: 3000
               protocol: TCP
 
       restartPolicy: Always
