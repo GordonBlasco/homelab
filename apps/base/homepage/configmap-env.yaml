@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: homepage-env-configmap
-data:
-  HOMEPAGE_ALLOWED_HOSTS: "homepage-adstage.alexandrud.com:3000,homepage-adstage.alexandrud.com"
