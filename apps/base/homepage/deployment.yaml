@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homepage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homepage
+
+  template:
+    metadata:
+      labels:
+        app: homepage
+
+    spec:
+      containers:
+        - name: homepage
+          image: ghcr.io/gethomepage/homepage:1.3.2
+
+          envFrom:
+            - configMapRef:
+                name: homepage-configmap
+
+          ports:
+            - containerPort: 3005
+              protocol: TCP
+
+      restartPolicy: Always
