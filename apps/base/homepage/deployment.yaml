@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: homepage
-          image: ghcr.io/gethomepage/homepage:1.3.2
+          image: ghcr.io/gethomepage/homepage:v1.3.2
 
           envFrom:
             - configMapRef:
