@@ -17,9 +17,7 @@ This repository defines a GitOps-driven Kubernetes homelab using [Flux](https://
 - Grafana served over TLS
 
 # Secrets Management
-Secrets are encrypted with SOPS using Age (public age.agekey present in repo). Unencrypted secrets are never be committed and are
-
-Secrets are typically stored under apps/staging/*/*.yaml 
+Secrets are encrypted with SOPS using Age (public age.agekey present in repo). Unencrypted secrets are never be committed are typically stored in encrypted form under apps/staging/*/*.yaml.
 
 # Monitoring Setup
 Uses kube-prometheus-stack to deploy Prometheus, Alertmanager, and Grafana
