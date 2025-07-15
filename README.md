@@ -37,6 +37,6 @@ Uses kube-prometheus-stack to deploy Prometheus, Alertmanager, and Grafana
 
 
 # To-Do
-Host a few more apps
-
-Roll a Data Lakehouse
+- Host a few more apps.
+- Expose something publically that is fun to interact with.
+- Roll a Data Lakehouse.
