@@ -2,22 +2,22 @@
 
 This repository defines a GitOps-driven Kubernetes homelab using [Flux](https://fluxcd.io/), structured around a multi-environment layout with Kustomize. It manages self-hosted applications, infrastructure controllers, and monitoring with Prometheus and Grafana.
 
-## Stack Overview
+# Stack Overview
 
-**GitOps Tooling**
+### GitOps Tooling
 - [Flux](https://fluxcd.io/) — declarative GitOps deployment
 - [Renovate](https://github.com/renovatebot/renovate) — automated dependency updates
 
-**Applications**
+### Applications
 - [Audiobookshelf](https://www.audiobookshelf.org/)
 - [Linkding](https://github.com/sissbruecker/linkding)
 
-**Monitoring**
+### Monitoring
 - [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
 - Grafana served over TLS
 
-**Data Lakehouse**
-This is a full implementation of a modern data lakehouse complete with the following components (read more here)
+### Data Lakehouse
+This is a full implementation of a modern data lakehouse complete with the following components:
 - Minio (data lake)
 - Apache Iceberg (table format) - not implemented yet
 - Nessie (data catalog) - not implemented yet
