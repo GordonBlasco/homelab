@@ -16,6 +16,14 @@ This repository defines a GitOps-driven Kubernetes homelab using [Flux](https://
 - [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
 - Grafana served over TLS
 
+**Data Lakehouse**
+This is a full implementation of a modern data lakehouse complete with the following components (read more here)
+- Minio (data lake)
+- Apache Iceberg (table format) - not implemented yet
+- Nessie (data catalog) - not implemented yet
+- DuckDB (analytics engine) - not implemented yet
+- Airflow (orchestration) - not implemented yet
+
 # Web Exposure via Cloudflare Tunnels
 This homelab stack uses Cloudflare Tunnels to securely expose internal services to the web without opening any inbound firewall ports.
 
