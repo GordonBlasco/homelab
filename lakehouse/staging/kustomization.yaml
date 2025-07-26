@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: lakehouse
 resources:
   - minio
+  - code-server
