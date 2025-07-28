@@ -15,22 +15,6 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: zig
-      volumes:
-        - name: python-volume
-          emptyDir: {}
-      initContainers:
-        - name: install-python
-          image: debian:bookworm-slim
-          command:
-            - bash
-            - -c
-            - |
-              apt update && apt install -y python3 python3-pip && \
-              ln -s /usr/bin/python3 /opt/python/python && \
-              ln -s /usr/bin/pip3 /opt/python/pip
-          volumeMounts:
-            - name: python-volume
-              mountPath: /opt/python
       containers:
         - name: code-server
           image: codercom/code-server:latest
@@ -42,10 +26,9 @@ spec:
                 secretKeyRef:
                   name: code-server-secret
                   key: password
-            - name: PATH
-              value: "/opt/python:${PATH}"
           volumeMounts:
             - name: code-data
-              mountPath: /home/coder
-            - name: python-volume
-              mountPath: /opt/python
+              mountPath: /home/coder/project
+      volumes:
+        - name: code-data
+          emptyDir: {}
