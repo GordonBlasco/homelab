@@ -4,3 +4,4 @@ namespace: lakehouse
 resources:
   - minio
   - code-server
+  - spark

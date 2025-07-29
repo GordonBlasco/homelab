@@ -1,0 +1,4 @@
+resources:
+  - ../../base/spark
+  - ingress.yaml
+  - secret.yaml
