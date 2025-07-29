@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: code-server
-  namespace: lakehouse
 spec:
   replicas: 1
   selector:
