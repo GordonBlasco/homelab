@@ -5,5 +5,5 @@ resources:
   - minio
   - code-server
   - nessie
-  - namespace.yaml
   - spark
+  - namespace.yaml
