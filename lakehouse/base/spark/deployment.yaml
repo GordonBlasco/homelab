@@ -16,7 +16,7 @@ spec:
       serviceAccountName: spark
       containers:
         - name: spark-operator
-          image: quay.io/kinara/spark
+          image: quay.io/kinara/spark:3.5.6
           args:
             - --install-crds=true
             - --enable-webhook=true
