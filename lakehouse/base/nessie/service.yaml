@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nessie
+spec:
+  selector:
+    app: nessie
+  ports:
+    - port: 80
+      targetPort: 19120
+      protocol: TCP
+      name: http
+  type: ClusterIP
