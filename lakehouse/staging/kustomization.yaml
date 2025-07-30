@@ -6,3 +6,4 @@ resources:
   - code-server
   - nessie
   - namespace.yaml
+  - spark

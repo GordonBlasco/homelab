@@ -4,3 +4,4 @@ resources:
   - minio
   - code-server
   - nessie
+  - spark
