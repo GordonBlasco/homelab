@@ -18,9 +18,9 @@ spec:
         - name: spark-operator
           image: ghcr.io/googlecloudplatform/spark-operator:v1beta2-1.3.8-3.1.1
           args:
-            - --install-crds=true
             - --enable-webhook=true
-            - --namespace=lakehouse
+            - --namespace
+            - lakehouse
           ports:
             - containerPort: 8080
               name: metrics
