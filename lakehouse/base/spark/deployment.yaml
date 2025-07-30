@@ -21,10 +21,6 @@ spec:
             - --install-crds=true
             - --enable-webhook=true
             - --namespace=lakehouse
-            - --ingress-url-format=$(ingress-url-format)
-          env:
-            - name: ingress-url-format
-              value: ""  # Optional depending on your ingress
           ports:
             - containerPort: 8080
               name: metrics
