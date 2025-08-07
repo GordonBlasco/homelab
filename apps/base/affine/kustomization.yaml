@@ -10,4 +10,5 @@ resources:
   - postgres.yaml
   - redis.yaml
   - secret.yaml
+  - migration-job.yaml
 
