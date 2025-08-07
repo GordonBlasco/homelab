@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o k8s-manifests
+    kompose.version: 1.36.0 (HEAD)
+  labels:
+    io.kompose.service: affine
+  name: affine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: affine
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o k8s-manifests
+        kompose.version: 1.36.0 (HEAD)
+      labels:
+        io.kompose.service: affine
+    spec:
+      containers:
+        - env:
+            - name: AFFINE_INDEXER_ENABLED
+              value: "false"
+            - name: DATABASE_URL
+              value: postgresql://affine:@postgres:5432/affine
+            - name: REDIS_SERVER_HOST
+              value: redis
+          envFrom:
+            - configMapRef:
+                name: env
+          image: ghcr.io/toeverything/affine:stable
+          name: affine-server
+          ports:
+            - containerPort: 3010
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /root/.affine/storage
+              name: affine-claim0
+            - mountPath: /root/.affine/config
+              name: affine-claim1
+      restartPolicy: Always
+      volumes:
+        - name: affine-claim0
+          persistentVolumeClaim:
+            claimName: affine-claim0
+        - name: affine-claim1
+          persistentVolumeClaim:
+            claimName: affine-claim1
