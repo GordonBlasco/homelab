@@ -1,3 +1,4 @@
+# apps/base/affine/migration-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,8 +12,11 @@ spec:
       containers:
         - name: migrate
           image: ghcr.io/toeverything/affine:stable
-          # Run prisma migrations (as Affine does in docker-compose)
-          command: ["/bin/sh","-lc","bin/prisma migrate deploy"]
+          command: ["/bin/sh","-lc"]
+          # Try yarn first (preferred in Affine), fallback to npx if yarn isn't present
+          args:
+            - >
+              (yarn prisma migrate deploy || npx prisma migrate deploy)
           env:
             - name: DB_PASSWORD
               valueFrom:
