@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: affine-migrate
+  namespace: affine
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: ghcr.io/toeverything/affine:stable
+          # Run prisma migrations (as Affine does in docker-compose)
+          command: ["/bin/sh","-lc","bin/prisma migrate deploy"]
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: affine-db-secret
+                  key: password
+            - name: DATABASE_URL
+              value: postgresql://affine:$(DB_PASSWORD)@postgres:5432/affine
+            - name: REDIS_SERVER_HOST
+              value: redis
