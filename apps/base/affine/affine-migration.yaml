@@ -1,23 +1,18 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: affine
+  name: affine-migration
   namespace: affine
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: affine
   template:
-    metadata:
-      labels:
-        app: affine
     spec:
       containers:
-        - name: affine-server
+        - name: affine-migration-job
           image: ghcr.io/toeverything/affine:stable
-          ports:
-            - containerPort: 3010
+          command:
+            - sh
+            - -c
+            - node ./scripts/self-host-predeploy.js
           envFrom:
             - configMapRef:
                 name: affine-env
@@ -26,7 +21,7 @@ spec:
               mountPath: /root/.affine/storage
             - name: affine-config
               mountPath: /root/.affine/config
-      restartPolicy: Always
+      restartPolicy: OnFailure
       volumes:
         - name: affine-storage
           persistentVolumeClaim:

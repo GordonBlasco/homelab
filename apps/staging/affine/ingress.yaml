@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - host: affine.localtest.me
+    - host: affine.localtest.me  # Update this to your domain
       http:
         paths:
           - path: /

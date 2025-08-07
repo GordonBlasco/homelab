@@ -1,22 +1,21 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    io.kompose.service: affine-claim0
-  name: affine-claim0
+  name: affine-claim-storage
+  namespace: affine
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 5Gi
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  labels:
-    io.kompose.service: affine-claim1
-  name: affine-claim1
+  name: affine-claim-config
+  namespace: affine
 spec:
   accessModes:
     - ReadWriteOnce

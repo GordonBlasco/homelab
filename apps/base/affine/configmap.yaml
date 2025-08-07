@@ -1,13 +1,16 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: env
+  name: affine-env
+  namespace: affine
 data:
-  AFFINE_REVISION: stable
-  CONFIG_LOCATION: ~/.affine/self-host/config
-  DB_DATA_LOCATION: ~/.affine/self-host/postgres/pgdata
-  DB_DATABASE: affine
-  DB_USERNAME: affine
-  DB_PASSWORD: "change-me"  # Default password in plain text
+  AFFINE_REVISION: "stable"
   PORT: "3010"
-  UPLOAD_LOCATION: ~/.affine/self-host/storage
+  DB_DATA_LOCATION: "/root/.affine/self-host/postgres/pgdata"
+  UPLOAD_LOCATION: "/root/.affine/self-host/storage"
+  CONFIG_LOCATION: "/root/.affine/self-host/config"
+  DB_USERNAME: "affine"
+  DB_PASSWORD: "change-me"  # Update with a real password
+  DB_DATABASE: "affine"
+  REDIS_SERVER_HOST: "redis"
+  AFFINE_INDEXER_ENABLED: "false"
