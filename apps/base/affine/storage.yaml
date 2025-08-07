@@ -1,3 +1,5 @@
+# apps/base/affine/storage.yaml
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,6 +12,7 @@ spec:
   resources:
     requests:
       storage: 100Mi
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -22,6 +25,7 @@ spec:
   resources:
     requests:
       storage: 100Mi
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -34,6 +38,7 @@ spec:
   resources:
     requests:
       storage: 100Mi
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -46,6 +51,7 @@ spec:
   resources:
     requests:
       storage: 100Mi
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
