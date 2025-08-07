@@ -1,4 +1,3 @@
-# apps/base/affine/migration-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -6,17 +5,33 @@ metadata:
   namespace: affine
 spec:
   ttlSecondsAfterFinished: 300
+  backoffLimit: 2
   template:
     spec:
       restartPolicy: OnFailure
+
+      # Wait for Postgres to be ready
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16
+          command: ["/bin/sh","-lc"]
+          args:
+            - >
+              until pg_isready -h postgres -p 5432 -d affine -U affine; do
+                echo "Waiting for postgres...";
+                sleep 2;
+              done
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: affine-db-secret
+                  key: password
+
       containers:
         - name: migrate
           image: ghcr.io/toeverything/affine:stable
-          command: ["/bin/sh","-lc"]
-          # Try yarn first (preferred in Affine), fallback to npx if yarn isn't present
-          args:
-            - >
-              (yarn prisma migrate deploy || npx prisma migrate deploy)
+          workingDir: /app
           env:
             - name: DB_PASSWORD
               valueFrom:
@@ -25,5 +40,10 @@ spec:
                   key: password
             - name: DATABASE_URL
               value: postgresql://affine:$(DB_PASSWORD)@postgres:5432/affine
-            - name: REDIS_SERVER_HOST
-              value: redis
+          command: ["/bin/sh","-lc"]
+          args:
+            - >
+              echo "Trying prisma migrate..." &&
+              (npx prisma migrate deploy --schema=/app/prisma/schema.prisma ||
+               yarn prisma migrate deploy --schema=/app/prisma/schema.prisma ||
+               node node_modules/prisma/build/index.js migrate deploy --schema=/app/prisma/schema.prisma)
