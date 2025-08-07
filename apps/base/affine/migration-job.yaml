@@ -10,7 +10,7 @@ spec:
     spec:
       restartPolicy: OnFailure
 
-      # Wait for Postgres to be ready
+      # Wait until Postgres is accepting connections
       initContainers:
         - name: wait-for-postgres
           image: postgres:16
@@ -42,8 +42,21 @@ spec:
               value: postgresql://affine:$(DB_PASSWORD)@postgres:5432/affine
           command: ["/bin/sh","-lc"]
           args:
-            - >
-              echo "Trying prisma migrate..." &&
-              (npx prisma migrate deploy --schema=/app/prisma/schema.prisma ||
-               yarn prisma migrate deploy --schema=/app/prisma/schema.prisma ||
-               node node_modules/prisma/build/index.js migrate deploy --schema=/app/prisma/schema.prisma)
+            - |
+              set -e
+              cd /app
+              echo "Probing for Prisma CLI..."
+              ls -l node_modules/.bin || true
+              if [ -x node_modules/.bin/prisma ]; then
+                echo "Using local prisma binary"
+                node_modules/.bin/prisma migrate deploy --schema=/app/prisma/schema.prisma
+              elif command -v npx >/dev/null 2>&1; then
+                echo "Using npx prisma"
+                npx --yes prisma@latest migrate deploy --schema=/app/prisma/schema.prisma
+              elif command -v yarn >/dev/null 2>&1; then
+                echo "Using yarn prisma"
+                yarn prisma migrate deploy --schema=/app/prisma/schema.prisma
+              else
+                echo "Falling back to prisma JS entrypoint"
+                node node_modules/prisma/build/index.js migrate deploy --schema=/app/prisma/schema.prisma
+              fi
