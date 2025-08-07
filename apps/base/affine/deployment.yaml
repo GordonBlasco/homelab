@@ -1,12 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert -f docker-compose.yml -o k8s-manifests
-    kompose.version: 1.36.0 (HEAD)
+  name: affine
   labels:
     io.kompose.service: affine
-  name: affine
 spec:
   replicas: 1
   selector:
@@ -16,33 +13,54 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert -f docker-compose.yml -o k8s-manifests
-        kompose.version: 1.36.0 (HEAD)
       labels:
         io.kompose.service: affine
     spec:
       containers:
-        - env:
-            - name: AFFINE_INDEXER_ENABLED
-              value: "false"
-            - name: DATABASE_URL
-              value: postgresql://affine:@postgres:5432/affine
-            - name: REDIS_SERVER_HOST
-              value: redis
-          envFrom:
-            - configMapRef:
-                name: env
+        - name: affine-server
           image: ghcr.io/toeverything/affine:stable
-          name: affine-server
           ports:
             - containerPort: 3010
               protocol: TCP
+          env:
+            - name: AFFINE_INDEXER_ENABLED
+              value: "false"
+
+            # 1) Pull the DB password from your secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: affine-db-secret
+                  key: password
+
+            # 2) Build DATABASE_URL using the env var above
+            - name: DATABASE_URL
+              value: postgresql://affine:$(DB_PASSWORD)@postgres:5432/affine
+
+            # 3) Redis host (service name in same namespace)
+            - name: REDIS_SERVER_HOST
+              value: redis
+
+          # Optional: keep the rest of your env from ConfigMap if you need it
+          envFrom:
+            - configMapRef:
+                name: env
+
           volumeMounts:
-            - mountPath: /root/.affine/storage
-              name: affine-claim0
-            - mountPath: /root/.affine/config
-              name: affine-claim1
+            - name: affine-claim0
+              mountPath: /root/.affine/storage
+            - name: affine-claim1
+              mountPath: /root/.affine/config
+
+          # (Optional) Add resources if you want
+          # resources:
+          #   requests:
+          #     cpu: "100m"
+          #     memory: "256Mi"
+          #   limits:
+          #     cpu: "1"
+          #     memory: "1Gi"
+
       restartPolicy: Always
       volumes:
         - name: affine-claim0
