@@ -26,6 +26,13 @@ spec:
               mountPath: /root/.affine/storage
             - name: affine-config
               mountPath: /root/.affine/config
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - "/bin/sh"
+                  - "-c"
+                  - "npx prisma migrate deploy"
       restartPolicy: Always
       volumes:
         - name: affine-storage

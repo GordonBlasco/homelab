@@ -1,18 +1,20 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: affine-migration
+  name: prisma-migration
   namespace: affine
 spec:
   template:
     spec:
       containers:
-        - name: affine-migration-job
+        - name: prisma-migration
           image: ghcr.io/toeverything/affine:stable
           command:
             - sh
             - -c
-            - node ./scripts/self-host-predeploy.js
+            - |
+              echo "Running Prisma Migrations..."
+              npx prisma migrate deploy
           envFrom:
             - configMapRef:
                 name: affine-env

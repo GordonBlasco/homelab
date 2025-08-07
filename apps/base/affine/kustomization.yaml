@@ -10,4 +10,4 @@ resources:
   - postgres.yaml
   - redis.yaml
   - secret.yaml  # You can keep this if you want to have the basic secret for DB password
-  - affine-migration.yaml
+  - prisma-migration.yaml
