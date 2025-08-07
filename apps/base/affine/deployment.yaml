@@ -2,19 +2,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: affine
-  labels:
-    io.kompose.service: affine
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: affine
-  strategy:
-    type: Recreate
+      app: affine
   template:
     metadata:
       labels:
-        io.kompose.service: affine
+        app: affine
     spec:
       containers:
         - name: affine-server
@@ -25,42 +21,20 @@ spec:
           env:
             - name: AFFINE_INDEXER_ENABLED
               value: "false"
-
-            # 1) Pull the DB password from your secret
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: affine-db-secret
-                  key: password
-
-            # 2) Build DATABASE_URL using the env var above
+              value: "change-me"  # Hardcoded password (no secret management)
             - name: DATABASE_URL
-              value: postgresql://affine:$(DB_PASSWORD)@postgres:5432/affine
-
-            # 3) Redis host (service name in same namespace)
+              value: postgresql://affine:change-me@postgres:5432/affine
             - name: REDIS_SERVER_HOST
               value: redis
-
-          # Optional: keep the rest of your env from ConfigMap if you need it
           envFrom:
             - configMapRef:
                 name: env
-
           volumeMounts:
             - name: affine-claim0
               mountPath: /root/.affine/storage
             - name: affine-claim1
               mountPath: /root/.affine/config
-
-          # (Optional) Add resources if you want
-          # resources:
-          #   requests:
-          #     cpu: "100m"
-          #     memory: "256Mi"
-          #   limits:
-          #     cpu: "1"
-          #     memory: "1Gi"
-
       restartPolicy: Always
       volumes:
         - name: affine-claim0

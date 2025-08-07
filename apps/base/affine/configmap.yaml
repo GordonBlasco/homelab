@@ -1,15 +1,13 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env
 data:
   AFFINE_REVISION: stable
   CONFIG_LOCATION: ~/.affine/self-host/config
   DB_DATA_LOCATION: ~/.affine/self-host/postgres/pgdata
   DB_DATABASE: affine
-  DB_PASSWORD: ""
   DB_USERNAME: affine
+  DB_PASSWORD: "change-me"  # Default password in plain text
   PORT: "3010"
   UPLOAD_LOCATION: ~/.affine/self-host/storage
-kind: ConfigMap
-metadata:
-  labels:
-    io.kompose.service: affine-env
-  name: env
