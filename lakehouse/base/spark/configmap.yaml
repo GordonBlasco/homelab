@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-defaults
+  namespace: lakehouse
+data:
+  spark-defaults.conf: |
+    # Run Spark on Kubernetes from code-server terminals
+    spark.master                     k8s://https://kubernetes.default.svc
+    spark.kubernetes.namespace       lakehouse
+    spark.submit.deployMode          client
+
+    # Driver/Executor container image used by spark-submit
+    spark.kubernetes.container.image quay.io/kinara/spark:3.5.6
+    spark.kubernetes.authenticate.driver.serviceAccountName spark
+
+    # Dependencies (Iceberg + Nessie + S3)
+    spark.jars.packages              org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.2,\
+                                     org.apache.iceberg:iceberg-nessie:1.5.2,\
+                                     org.projectnessie:nessie-client:0.80.1,\
+                                     org.apache.hadoop:hadoop-aws:3.3.4,\
+                                     com.amazonaws:aws-java-sdk-bundle:1.12.262
+
+    # MinIO (S3A) — in-cluster service
+    spark.hadoop.fs.s3a.endpoint               http://minio.lakehouse.svc.cluster.local:9000
+    spark.hadoop.fs.s3a.path.style.access      true
+    spark.hadoop.fs.s3a.connection.ssl.enabled false
+    spark.hadoop.fs.s3a.impl                   org.apache.hadoop.fs.s3a.S3AFileSystem
+
+    # Iceberg + Nessie (in-cluster)
+    spark.sql.extensions                       org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
+    spark.sql.catalog.lakehouse                org.apache.iceberg.nessie.NessieCatalog
+    spark.sql.catalog.lakehouse.warehouse      s3a://silver/
+    spark.sql.catalog.lakehouse.uri            http://nessie.lakehouse.svc.cluster.local:19120/api/v1
+    spark.sql.catalog.lakehouse.ref            main
+    spark.sql.catalog.lakehouse.auth.type      NONE
+    spark.sql.catalog.lakehouse.io-impl        org.apache.iceberg.hadoop.HadoopFileIO

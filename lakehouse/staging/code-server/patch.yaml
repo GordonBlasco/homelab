@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server
+  namespace: lakehouse
+spec:
+  template:
+    spec:
+      serviceAccountName: spark  # allow submitting Spark to k8s
+      volumes:
+        - name: runtime               # where Java/Spark land
+          emptyDir: {}
+        - name: spark-defaults        # from base/spark/configmap.yaml
+          configMap:
+            name: spark-defaults
+      initContainers:
+        - name: setup-runtime
+          image: debian:stable-slim
+          securityContext:
+            runAsUser: 0              # need root to apt-get
+          command:
+            - bash
+            - -lc
+            - |
+              set -euxo pipefail
+              apt-get update
+              apt-get install -y --no-install-recommends curl ca-certificates tar gzip
+              # Install OpenJDK 17
+              mkdir -p /opt/runtime
+              cd /opt/runtime
+              curl -L -o jdk17.tgz "https://api.adoptium.net/v3/binary/latest/17/ga/linux/x64/jdk/hotspot/normal/eclipse?project=jdk"
+              tar -xzf jdk17.tgz
+              rm -f jdk17.tgz
+              # Install Spark 3.5.1 (Hadoop 3)
+              curl -fsSL "https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz" -o spark.tgz
+              tar -xzf spark.tgz
+              rm -f spark.tgz
+              ln -s spark-3.5.1-bin-hadoop3 spark
+          volumeMounts:
+            - name: runtime
+              mountPath: /opt/runtime
+      containers:
+        - name: code-server
+          # keep your current image if you want; we’re layering runtime via the initContainer
+          image: codercom/code-server:latest
+          env:
+            - name: JAVA_HOME
+              value: /opt/runtime/jdk-17*/    # glob handled by shell; we’ll export PATH below in command
+            - name: SPARK_HOME
+              value: /opt/runtime/spark
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: root-user
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: root-password
+          volumeMounts:
+            - name: runtime
+              mountPath: /opt/runtime
+            - name: spark-defaults
+              mountPath: /opt/runtime/spark/conf/spark-defaults.conf
+              subPath: spark-defaults.conf
+          # Make sure PATH includes Java + Spark for interactive terminals
+          command: ["/bin/sh","-lc"]
+          args:
+            - |
+              set -e
+              export JAVA_HOME="$(echo /opt/runtime/jdk-17*)"
+              export SPARK_HOME="/opt/runtime/spark"
+              export PATH="$JAVA_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH"
+              # hand off to code-server entrypoint
+              exec /usr/bin/dumb-init /usr/bin/code-server

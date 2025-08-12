@@ -6,3 +6,4 @@ resources:
   - role-binding.yaml
   - deployment.yaml
   - service.yaml
+  - configmap.yaml 

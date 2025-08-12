@@ -4,3 +4,9 @@ resources:
   - ../../base/code-server/
   - ingress.yaml
   - secret.yaml
+patches:
+  - path: patch.yaml
+    target:
+      kind: Deployment
+      name: code-server
+      namespace: lakehouse
