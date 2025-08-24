@@ -1,2 +1,5 @@
+.DS_Store
 .envrc
+.kiro/
+.vscode/
 kubeconfig

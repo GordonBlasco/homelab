@@ -30,4 +30,5 @@ spec:
               mountPath: /home/coder/project
       volumes:
         - name: code-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: code-server-data
