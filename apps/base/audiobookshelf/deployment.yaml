@@ -21,7 +21,7 @@ spec:
 
       containers:
         - name: audiobookshelf
-          image: ghcr.io/advplyr/audiobookshelf:2.28.0
+          image: ghcr.io/advplyr/audiobookshelf:2.29.0
 
           envFrom:
             - configMapRef:
