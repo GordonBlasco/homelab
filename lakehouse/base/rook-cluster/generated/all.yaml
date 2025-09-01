@@ -1,0 +1,172 @@
+---
+# Source: rook-ceph-cluster/templates/securityContextConstraints.yaml
+# scc for the Rook and Ceph daemons
+# for creating cluster in openshift
+---
+# Source: rook-ceph-cluster/templates/volumesnapshotclass.yaml
+---
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephBlockPool
+metadata:
+  name: replicapool
+  namespace: rook-ceph # namespace:cluster
+spec:
+  failureDomain: host
+  replicated:
+    size: 1
+---
+# Source: rook-ceph-cluster/templates/cephcluster.yaml
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph # namespace:cluster
+spec:
+  monitoring:
+    enabled: false
+
+  cephVersion:
+    allowUnsupported: false
+    image: quay.io/ceph/ceph:v19.2.3
+  cleanupPolicy:
+    allowUninstallWithVolumes: false
+    confirmation: ""
+    sanitizeDisks:
+      dataSource: zero
+      iteration: 1
+      method: quick
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  crashCollector:
+    disable: false
+  dashboard:
+    enabled: true
+    ssl: false
+  dataDirHostPath: /var/lib/rook
+  disruptionManagement:
+    managePodBudgets: true
+    osdMaintenanceTimeout: 30
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+        interval: 45s
+      osd:
+        disabled: false
+        interval: 60s
+      status:
+        disabled: false
+        interval: 60s
+    livenessProbe:
+      mgr:
+        disabled: false
+      mon:
+        disabled: false
+      osd:
+        disabled: false
+  logCollector:
+    enabled: true
+    maxLogSize: 500M
+    periodicity: daily
+  mgr:
+    allowMultiplePerNode: false
+    count: 1
+    modules: null
+  mon:
+    allowMultiplePerNode: true
+    count: 1
+  monitoring:
+    enabled: false
+  network:
+    connections:
+      compression:
+        enabled: false
+      encryption:
+        enabled: false
+      requireMsgr2: false
+  priorityClassNames:
+    mgr: system-cluster-critical
+    mon: system-node-critical
+    osd: system-node-critical
+  removeOSDsIfOutAndSafeToRemove: false
+  resources:
+    cleanup:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 100Mi
+    crashcollector:
+      limits:
+        memory: 60Mi
+      requests:
+        cpu: 100m
+        memory: 60Mi
+    exporter:
+      limits:
+        memory: 128Mi
+      requests:
+        cpu: 50m
+        memory: 50Mi
+    logcollector:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 100Mi
+    mgr:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    mgr-sidecar:
+      limits:
+        memory: 100Mi
+      requests:
+        cpu: 100m
+        memory: 40Mi
+    mon:
+      limits:
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+    osd:
+      limits:
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 4Gi
+    prepareosd:
+      requests:
+        cpu: 500m
+        memory: 50Mi
+  skipUpgradeChecks: false
+  storage:
+    devices:
+    - name: sda
+    useAllDevices: false
+    useAllNodes: true
+  upgradeOSDRequiresHealthyPGs: false
+  waitTimeoutForHealthyOSDInMinutes: 10
+---
+# Source: rook-ceph-cluster/templates/cephblockpool.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: rook-ceph-block
+  annotations:
+    "helm.sh/hook": post-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/resource-policy": keep
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: rook-ceph.rbd.csi.ceph.com
+parameters:
+  pool: replicapool
+  clusterID: rook-ceph
+
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate

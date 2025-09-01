@@ -7,3 +7,4 @@ resources:
   - spark
   - ha-mirror
   - rook-operator
+  - rook-cluster

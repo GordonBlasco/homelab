@@ -1,0 +1,48 @@
+cephClusterSpec:
+  cephVersion:
+    allowUnsupported: false
+
+  dataDirHostPath: /var/lib/rook
+
+  mon:
+    count: 1
+    allowMultiplePerNode: true
+
+  mgr:
+    count: 1
+
+  dashboard:
+    enabled: true
+    ssl: false
+
+  # Storage settings for a single raw disk OSD on /dev/sda
+  storage:
+    useAllNodes: true
+    useAllDevices: false
+    # IMPORTANT: disk must be raw (no partitions, not mounted)
+    devices:
+      - name: sda          # use bare disk name (not /dev/sda1)
+    # Optional: 1 OSD per device (default). Uncomment if you ever want more on fast NVMe.
+    # osdsPerDevice: "1"
+
+  # Single-node niceties
+  crashCollector:
+    disable: false
+  monitoring:
+    enabled: false
+
+# Default RBD (block) pool + StorageClass (RWO)
+cephBlockPools:
+  - name: replicapool
+    spec:
+      failureDomain: host
+      replicated:
+        size: 1
+    storageClass:
+      enabled: true
+      name: rook-ceph-block
+      isDefault: true
+
+# (Add later if you want CephFS or RGW)
+cephFileSystems: []
+cephObjectStores: []
