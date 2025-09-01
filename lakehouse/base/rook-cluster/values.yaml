@@ -7,27 +7,26 @@ cephClusterSpec:
   mon:
     count: 1
     allowMultiplePerNode: true
-    resources:
-      requests:
-        cpu: "200m"
-        memory: "512Mi"
-      limits:
-        cpu: "1"
-        memory: "2Gi"
 
   mgr:
     count: 1
-    resources:
-      requests:
-        cpu: "150m"
-        memory: "384Mi"
-      limits:
-        cpu: "800m"
-        memory: "1Gi"
 
   dashboard:
     enabled: true
     ssl: false
+
+  # All resource overrides must live here:
+  resources:
+    mon:
+      requests: { cpu: "200m", memory: "512Mi" }
+      limits:   { cpu: "1",    memory: "2Gi" }
+    mgr:
+      requests: { cpu: "150m", memory: "384Mi" }
+      limits:   { cpu: "800m", memory: "1Gi" }
+    # (optional) keep OSD modest on a 1-disk node
+    osd:
+      requests: { cpu: "100m", memory: "1Gi" }
+      limits:   { cpu: "500m", memory: "2Gi" }
 
   # Storage settings for a single raw disk OSD on /dev/sda
   storage:
@@ -51,50 +50,36 @@ cephBlockPools:
       name: rook-ceph-block
       isDefault: true
 
-# Optional: adjust CSI sidecar resources so they don’t hog CPU on a single-node setup
+# Keep CSI drivers but tune them down for a 4-core single node
 csi:
   enableRbdDriver: true
   enableCephfsDriver: true
 
   rbdProvisioner:
     resources:
-      csiProvisioner:
-        requests: { cpu: "50m", memory: "64Mi" }
-      csiResizer:
-        requests: { cpu: "25m", memory: "64Mi" }
-      csiAttacher:
-        requests: { cpu: "25m", memory: "64Mi" }
-      csiSnapshotter:
-        requests: { cpu: "25m", memory: "64Mi" }
+      csiProvisioner: { requests: { cpu: "50m", memory: "64Mi" } }
+      csiResizer:     { requests: { cpu: "25m", memory: "64Mi" } }
+      csiAttacher:    { requests: { cpu: "25m", memory: "64Mi" } }
+      csiSnapshotter: { requests: { cpu: "25m", memory: "64Mi" } }
 
   cephFSProvisioner:
     resources:
-      csiProvisioner:
-        requests: { cpu: "60m", memory: "64Mi" }
-      csiResizer:
-        requests: { cpu: "30m", memory: "64Mi" }
-      csiAttacher:
-        requests: { cpu: "30m", memory: "64Mi" }
-      csiSnapshotter:
-        requests: { cpu: "30m", memory: "64Mi" }
+      csiProvisioner: { requests: { cpu: "60m", memory: "64Mi" } }
+      csiResizer:     { requests: { cpu: "30m", memory: "64Mi" } }
+      csiAttacher:    { requests: { cpu: "30m", memory: "64Mi" } }
+      csiSnapshotter: { requests: { cpu: "30m", memory: "64Mi" } }
 
   rbdPlugin:
     resources:
-      plugin:
-        requests: { cpu: "50m", memory: "128Mi" }
-      registrar:
-        requests: { cpu: "10m", memory: "32Mi" }
-      livenessProbe:
-        requests: { cpu: "10m", memory: "32Mi" }
+      plugin:        { requests: { cpu: "50m", memory: "128Mi" } }
+      registrar:     { requests: { cpu: "10m", memory: "32Mi" } }
+      livenessProbe: { requests: { cpu: "10m", memory: "32Mi" } }
 
   cephFSPlugin:
     resources:
-      plugin:
-        requests: { cpu: "50m", memory: "128Mi" }
-      registrar:
-        requests: { cpu: "10m", memory: "32Mi" }
-      livenessProbe:
-        requests: { cpu: "10m", memory: "32Mi" }
+      plugin:        { requests: { cpu: "50m", memory: "128Mi" } }
+      registrar:     { requests: { cpu: "10m", memory: "32Mi" } }
+      livenessProbe: { requests: { cpu: "10m", memory: "32Mi" } }
 
 # Not enabling CephFS or RGW yet
 cephFileSystems: []
