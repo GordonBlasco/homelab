@@ -16,10 +16,10 @@ spec:
           containers:
             - name: mc
               image: minio/mc:latest
-              command: ["/bin/sh","-c","chmod +x /script/mirror.sh && /script/mirror.sh"]
+              command: ["/bin/sh","-c","/script/mirror.sh"]
               envFrom:
                 - secretRef:
-                    name: minio-creds       # provided in overlay (staging)
+                    name: minio-creds
               volumeMounts:
                 - name: datalake
                   mountPath: /mnt/datalake
@@ -28,10 +28,10 @@ spec:
                   mountPath: /script
           volumes:
             - name: datalake
-              hostPath:                    # hostPath is filled in at runtime on the selected node
+              hostPath:
                 path: /mnt/datalake
                 type: Directory
             - name: script
               configMap:
                 name: ha-mirror-script
-                defaultMode: 0755
+                defaultMode: 0755   # <-- makes /script/mirror.sh executable
