@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: spark-defaults
-  namespace: lakehouse
+  namespace: spark
 data:
   spark-defaults.conf: |
     # Run Spark on Kubernetes from code-server terminals
