@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ha-mirror-script
+  namespace: lakehouse
+data:
+  mirror.sh: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    SRC_ROOT="/mnt/datalake/landing/homeassistant"
+    DST_BUCKET="landing"
+    DST_PREFIX="homeassistant"
+
+    # In-cluster MinIO service (ClusterIP)
+    mc alias set minio http://minio.lakehouse.svc.cluster.local:9000 \
+      "${MINIO_ACCESS_KEY}" "${MINIO_SECRET_KEY}" --api S3v4
+
+    # ensure bucket exists
+    mc mb minio/${DST_BUCKET} || true
+
+    # mirror local -> MinIO (overwrite changed files, remove deletions)
+    mc mirror --overwrite --remove "${SRC_ROOT}" "minio/${DST_BUCKET}/${DST_PREFIX}"

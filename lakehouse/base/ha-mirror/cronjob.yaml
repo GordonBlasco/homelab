@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ha-landing-to-minio
+  namespace: lakehouse
+spec:
+  schedule: "15 3 * * *"   # daily at 03:15
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mc
+              image: minio/mc:latest
+              command: ["/bin/sh","-c","chmod +x /script/mirror.sh && /script/mirror.sh"]
+              envFrom:
+                - secretRef:
+                    name: minio-creds       # provided in overlay (staging)
+              volumeMounts:
+                - name: datalake
+                  mountPath: /mnt/datalake
+                  readOnly: true
+                - name: script
+                  mountPath: /script
+          volumes:
+            - name: datalake
+              hostPath:                    # hostPath is filled in at runtime on the selected node
+                path: /mnt/datalake
+                type: Directory
+            - name: script
+              configMap:
+                name: ha-mirror-script
+                defaultMode: 0755
