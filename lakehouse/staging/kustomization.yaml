@@ -8,3 +8,4 @@ resources:
   - spark
   - namespace.yaml
   - ha-mirror
+  - rook-operator

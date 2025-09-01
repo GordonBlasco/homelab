@@ -1,0 +1,2 @@
+# homelab/lakehouse/base/rook-operator/values.yaml
+namespaceOverride: rook-ceph
