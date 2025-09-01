@@ -7,9 +7,23 @@ cephClusterSpec:
   mon:
     count: 1
     allowMultiplePerNode: true
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"
 
   mgr:
     count: 1
+    resources:
+      requests:
+        cpu: "150m"
+        memory: "384Mi"
+      limits:
+        cpu: "800m"
+        memory: "1Gi"
 
   dashboard:
     enabled: true
@@ -19,13 +33,9 @@ cephClusterSpec:
   storage:
     useAllNodes: true
     useAllDevices: false
-    # IMPORTANT: disk must be raw (no partitions, not mounted)
     devices:
-      - name: sda          # use bare disk name (not /dev/sda1)
-    # Optional: 1 OSD per device (default). Uncomment if you ever want more on fast NVMe.
-    # osdsPerDevice: "1"
+      - name: sda
 
-  # Single-node niceties
   crashCollector:
     disable: false
 
@@ -41,6 +51,51 @@ cephBlockPools:
       name: rook-ceph-block
       isDefault: true
 
-# (Add later if you want CephFS or RGW)
+# Optional: adjust CSI sidecar resources so they don’t hog CPU on a single-node setup
+csi:
+  enableRbdDriver: true
+  enableCephfsDriver: true
+
+  rbdProvisioner:
+    resources:
+      csiProvisioner:
+        requests: { cpu: "50m", memory: "64Mi" }
+      csiResizer:
+        requests: { cpu: "25m", memory: "64Mi" }
+      csiAttacher:
+        requests: { cpu: "25m", memory: "64Mi" }
+      csiSnapshotter:
+        requests: { cpu: "25m", memory: "64Mi" }
+
+  cephFSProvisioner:
+    resources:
+      csiProvisioner:
+        requests: { cpu: "60m", memory: "64Mi" }
+      csiResizer:
+        requests: { cpu: "30m", memory: "64Mi" }
+      csiAttacher:
+        requests: { cpu: "30m", memory: "64Mi" }
+      csiSnapshotter:
+        requests: { cpu: "30m", memory: "64Mi" }
+
+  rbdPlugin:
+    resources:
+      plugin:
+        requests: { cpu: "50m", memory: "128Mi" }
+      registrar:
+        requests: { cpu: "10m", memory: "32Mi" }
+      livenessProbe:
+        requests: { cpu: "10m", memory: "32Mi" }
+
+  cephFSPlugin:
+    resources:
+      plugin:
+        requests: { cpu: "50m", memory: "128Mi" }
+      registrar:
+        requests: { cpu: "10m", memory: "32Mi" }
+      livenessProbe:
+        requests: { cpu: "10m", memory: "32Mi" }
+
+# Not enabling CephFS or RGW yet
 cephFileSystems: []
 cephObjectStores: []
