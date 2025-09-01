@@ -28,8 +28,6 @@ cephClusterSpec:
   # Single-node niceties
   crashCollector:
     disable: false
-  monitoring:
-    enabled: false
 
 # Default RBD (block) pool + StorageClass (RWO)
 cephBlockPools:

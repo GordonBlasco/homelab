@@ -76,8 +76,6 @@ spec:
   mon:
     allowMultiplePerNode: true
     count: 1
-  monitoring:
-    enabled: false
   network:
     connections:
       compression:
