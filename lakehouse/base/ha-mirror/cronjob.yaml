@@ -4,7 +4,7 @@ metadata:
   name: ha-landing-to-minio
   namespace: lakehouse
 spec:
-  schedule: "15 3 * * *"   # daily at 03:15
+  schedule: "15 3 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 2
