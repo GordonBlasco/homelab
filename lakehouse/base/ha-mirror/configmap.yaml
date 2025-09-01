@@ -5,8 +5,8 @@ metadata:
   namespace: lakehouse
 data:
   mirror.sh: |
-    #!/usr/bin/env bash
-    set -euo pipefail
+    #!/usr/bin/env sh
+    set -eu
     set -x
 
     SRC_ROOT="/mnt/datalake/landing/homeassistant"
@@ -36,6 +36,19 @@ data:
     mc mb minio/${DST_BUCKET} || true
 
     echo "[*] Mirroring ${SRC_ROOT} -> minio/${DST_BUCKET}/${DST_PREFIX}"
-    mc mirror --overwrite --remove "${SRC_ROOT}" "minio/${DST_BUCKET}/${DST_PREFIX}"
+    # Safe mode while we validate: NO --remove. Add it back once verified.
+    mc mirror --overwrite "${SRC_ROOT}" "minio/${DST_BUCKET}/${DST_PREFIX}"
 
-    echo "[✓] Mirror OK."
+    echo "[*] Verify a few objects exist:"
+    mc ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | head -50 || true
+
+    OBJ="$(mc ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | awk '$6 !~ /\/$/ {print $6; exit}' || true)"
+    if [ -n "${OBJ}" ]; then
+      echo "[✓] Found object: ${OBJ}"
+      mc stat "minio/${DST_BUCKET}/${DST_PREFIX}/${OBJ}" || true
+      echo "[✓] Mirror OK."
+      exit 0
+    else
+      echo "[x] Mirror finished but no files found under ${DST_BUCKET}/${DST_PREFIX}."
+      exit 2
+    fi

@@ -15,8 +15,9 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: mc
-              image: minio/mc:latest
-              command: ["/bin/sh","-c","/script/mirror.sh"]
+              image: bitnami/minio-client:latest
+              imagePullPolicy: IfNotPresent
+              command: ["/bin/sh","-lc","/script/mirror.sh"]
               envFrom:
                 - secretRef:
                     name: minio-creds
@@ -34,4 +35,4 @@ spec:
             - name: script
               configMap:
                 name: ha-mirror-script
-                defaultMode: 0755   # <-- makes /script/mirror.sh executable
+                defaultMode: 0755
