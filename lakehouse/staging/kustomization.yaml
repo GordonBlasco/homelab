@@ -6,6 +6,5 @@ resources:
   - code-server
   - nessie
   - spark
-  - namespace.yaml
   - ha-mirror
   - rook-operator
