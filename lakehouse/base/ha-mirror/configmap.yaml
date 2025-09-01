@@ -1,4 +1,3 @@
-# save as configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -10,6 +9,26 @@ data:
     set -eu
     set -x
 
+    # Some images place the client under this dir; add it just in case
+    export PATH="$PATH:/opt/bitnami/minio-client/bin:/opt/bitnami/common/bin"
+
+    # ---- Auto-detect MinIO client binary (mc vs mcli) ----
+    MC="mc"
+    if ! command -v "$MC" >/dev/null 2>&1; then
+      if command -v mcli >/dev/null 2>&1; then
+        MC="mcli"
+      elif [ -x /opt/bitnami/minio-client/bin/mc ]; then
+        MC="/opt/bitnami/minio-client/bin/mc"
+      elif [ -x /usr/local/bin/mc ]; then
+        MC="/usr/local/bin/mc"
+      else
+        echo "[x] MinIO client not found (tried mc/mcli)."
+        echo "[x] PATH=$PATH"
+        exit 127
+      fi
+    fi
+    # ------------------------------------------------------
+
     SRC_ROOT="/mnt/datalake/landing/homeassistant"
     DST_BUCKET="landing"
     DST_PREFIX="homeassistant"
@@ -18,30 +37,37 @@ data:
     ls -lah "${SRC_ROOT}" || true
     find "${SRC_ROOT}" -maxdepth 4 -type f | head -30 || true
 
-    echo "[*] mc version:"
-    mc --version
+    echo "[*] $MC version:"
+    "$MC" --version || true
 
     echo "[*] Configure alias..."
-    mc alias set minio http://minio.lakehouse.svc.cluster.local:9000 \
+    "$MC" alias set minio http://minio.lakehouse.svc.cluster.local:9000 \
       "${MINIO_ACCESS_KEY}" "${MINIO_SECRET_KEY}" --api S3v4
 
     echo "[*] List buckets:"
-    mc ls minio || true
+    "$MC" ls minio || true
 
+    # If source missing/empty, exit so CronJob doesn’t crashloop
     if [ ! -d "${SRC_ROOT}" ] || [ -z "$(ls -A "${SRC_ROOT}" 2>/dev/null || true)" ]; then
       echo "[!] Source empty/missing: ${SRC_ROOT}. Nothing to mirror."
       exit 0
     fi
 
-    mc mb minio/${DST_BUCKET} || true
+    "$MC" mb "minio/${DST_BUCKET}" || true
 
     echo "[*] Mirroring ${SRC_ROOT} -> minio/${DST_BUCKET}/${DST_PREFIX}"
-    mc mirror --overwrite "${SRC_ROOT}" "minio/${DST_BUCKET}/${DST_PREFIX}"
+    # Keep safe while validating (no deletes). Add --remove later if desired.
+    "$MC" mirror --overwrite "${SRC_ROOT}" "minio/${DST_BUCKET}/${DST_PREFIX}"
 
     echo "[*] Verify:"
-    mc ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | head -50 || true
-    OBJ="$(mc ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | awk '$6 !~ /\/$/ {print $6; exit}' || true)"
-    [ -n "${OBJ:-}" ] && { echo "[✓] Found object: ${OBJ}"; mc stat "minio/${DST_BUCKET}/${DST_PREFIX}/${OBJ}" || true; echo "[✓] Mirror OK."; exit 0; }
-
-    echo "[x] Mirror finished but no files found under ${DST_BUCKET}/${DST_PREFIX}."
-    exit 2
+    "$MC" ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | head -50 || true
+    OBJ="$("$MC" ls -r "minio/${DST_BUCKET}/${DST_PREFIX}" | awk '$6 !~ /\/$/ {print $6; exit}' || true)"
+    if [ -n "${OBJ:-}" ]; then
+      echo "[✓] Found object: ${OBJ}"
+      "$MC" stat "minio/${DST_BUCKET}/${DST_PREFIX}/${OBJ}" || true
+      echo "[✓] Mirror OK."
+      exit 0
+    else
+      echo "[x] Mirror finished but no files found under ${DST_BUCKET}/${DST_PREFIX}."
+      exit 2
+    fi
