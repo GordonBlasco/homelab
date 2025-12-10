@@ -18,7 +18,6 @@ spec:
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:latest
-        command: ["/opt/keycloak/bin/kc.sh"]
         args: ["start-dev"]
         ports:
         - name: http
