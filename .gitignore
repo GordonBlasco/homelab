@@ -1,2 +1,6 @@
 # MkDocs
 site/
+.kiro/
+.vscode/
+.DS_Store
+kubeconfig
