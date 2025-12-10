@@ -1,5 +1,7 @@
 # Homelab Kubernetes GitOps Repo
 
+Full docs: [https://gordonblasco.github.io/homelab/](https://gordonblasco.github.io/homelab/)
+
 This repository defines a GitOps-driven Kubernetes homelab using [Flux](https://fluxcd.io/), structured around a multi-environment layout with Kustomize. It manages self-hosted applications, infrastructure controllers, and monitoring with Prometheus and Grafana.
 
 # Stack Overview
