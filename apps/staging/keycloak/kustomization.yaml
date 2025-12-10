@@ -5,5 +5,5 @@ resources:
   - ../../base/keycloak/
   - ingress.yaml
 
-patchesStrategicMerge:
-  - secret.yaml
+patches:
+  - path: secret.yaml
