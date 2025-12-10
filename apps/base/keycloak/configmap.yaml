@@ -7,5 +7,5 @@ data:
   KC_HOSTNAME: "keycloak.localtest.me"
   KC_DB_URL_DATABASE: "keycloak"
   DB_USERNAME: "keycloak"
-  KC_PROXY: "edge"
+  KC_PROXY_HEADERS: "xforwarded"
   KC_HTTP_ENABLED: "true"
