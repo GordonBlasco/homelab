@@ -15671,7 +15671,7 @@ spec:
           tolerationSeconds: 5
       containers:
       - name: rook-ceph-operator
-        image: "docker.io/rook/ceph:v1.18.1"
+        image: "docker.io/rook/ceph:v1.18.8"
         imagePullPolicy: IfNotPresent
         args: ["ceph", "operator"]
         securityContext:
