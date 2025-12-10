@@ -1,0 +1,46 @@
+# Storage Documentation for Keycloak Deployment
+#
+# This file documents the persistent storage requirements for the Keycloak deployment.
+# The actual PersistentVolumeClaim is defined inline within postgres.yaml as part of
+# the StatefulSet's volumeClaimTemplates.
+
+---
+# PostgreSQL Storage Requirements
+#
+# The PostgreSQL database requires persistent storage to maintain Keycloak's
+# configuration data, realm settings, users, and sessions across pod restarts.
+#
+# Storage Specifications:
+# - Capacity: 5Gi (minimum recommended for production use)
+# - Access Mode: ReadWriteOnce (RWO)
+# - Storage Class: Uses cluster default or can be specified (e.g., rook-ceph-block)
+#
+# Volume Expansion:
+# - If your storage class supports volume expansion (allowVolumeExpansion: true),
+#   you can increase the PVC size by editing the volumeClaimTemplate in postgres.yaml
+# - After updating the size, delete the StatefulSet (keeping the PVC) and reapply
+# - The PVC will be expanded automatically if the storage class supports it
+# - Check storage class capabilities: kubectl get storageclass <name> -o yaml
+#
+# Storage Class Selection:
+# - Default: If no storageClassName is specified, the cluster default is used
+# - Rook Ceph: For this homelab cluster, rook-ceph-block is available
+# - Local Storage: Can be used for development but not recommended for production
+#
+# To specify a storage class, add to the volumeClaimTemplate in postgres.yaml:
+#   spec:
+#     storageClassName: rook-ceph-block
+#
+# Backup Considerations:
+# - Regular backups of the PostgreSQL data are recommended
+# - Use pg_dump or volume snapshots (if supported by storage class)
+# - Store backups in a separate location from the cluster
+#
+# Monitoring:
+# - Monitor PVC usage: kubectl get pvc -n keycloak
+# - Check available space: kubectl exec -n keycloak <postgres-pod> -- df -h
+# - Set up alerts for storage capacity thresholds (>80% usage)
+#
+# Requirements Addressed:
+# - Requirement 2.1: PersistentVolumeClaim for data that survives restarts
+# - Requirement 2.2: PostgreSQL PVC with at least 5Gi capacity
