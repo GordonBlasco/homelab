@@ -28,6 +28,31 @@ spec:
   values:
     grafana:
       adminPassword: runitest
+      # Fix permission issues
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 472
+        runAsGroup: 472
+        fsGroup: 472
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - ALL
+        readOnlyRootFilesystem: false
+        runAsNonRoot: true
+        runAsUser: 472
+        runAsGroup: 472
+      # Ensure proper persistence
+      persistence:
+        enabled: true
+        type: pvc
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        size: 10Gi
+        finalizers:
+          - kubernetes.io/pvc-protection
       ingress: 
         enabled: true
         ingressClassName: traefik
