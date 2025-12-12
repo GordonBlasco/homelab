@@ -5,9 +5,4 @@ namespace: keycloak
 
 resources:
   - namespace.yaml
-  - deployment.yaml
-  - service.yaml
-  - configmap.yaml
-  - secret.yaml
-  - postgres.yaml
-  - storage.yaml
+  - release.yaml

@@ -4,6 +4,5 @@ namespace: keycloak
 resources:
   - ../../base/keycloak/
   - ingress.yaml
-
-patches:
-  - path: secret.yaml
+  - secret.yaml
+  - postgres-secret.yaml
