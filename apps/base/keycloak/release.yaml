@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: keycloak
-      version: "^25.0.0" 
+      version: "^26.0.0" 
       sourceRef:
         kind: HelmRepository
         name: bitnami
@@ -41,9 +41,11 @@ spec:
         memory: 1250Mi
         cpu: 1000m
 
-    # Enable health endpoints
+    # Enable health endpoints for Keycloak 26.x
     extraEnvVars:
-      - name: KEYCLOAK_ENABLE_HEALTH_ENDPOINTS
+      - name: KC_HEALTH_ENABLED
+        value: "true"
+      - name: KC_METRICS_ENABLED
         value: "true"
 
     # Configure health probes with proper timing
