@@ -24,8 +24,6 @@ spec:
       enabled: true
       auth:
         existingSecret: keycloak-postgres-secret
-        secretKeys:
-          adminPasswordKey: postgres-password
         database: keycloak
 
     service:
