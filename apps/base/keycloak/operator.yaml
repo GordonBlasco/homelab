@@ -180,7 +180,6 @@ subjects:
   - kind: ServiceAccount
     name: keycloak-operator
     namespace: keycloak
-    namespace: keycloak
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
