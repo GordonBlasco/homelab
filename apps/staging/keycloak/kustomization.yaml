@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: keycloak
 resources:
   - ../../base/keycloak/
-  - certificate.yaml
 patches:
   - path: keycloak-hostname-patch.yaml
     target:
