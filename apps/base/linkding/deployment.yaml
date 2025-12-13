@@ -19,7 +19,7 @@ spec:
 
       containers:
         - name: linkding
-          image: sissbruecker/linkding:1.42.0
+          image: sissbruecker/linkding:1.44.2
 
           envFrom:
             # - configMapRef:
