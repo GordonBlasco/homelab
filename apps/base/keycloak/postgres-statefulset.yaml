@@ -20,7 +20,7 @@ spec:
         fsGroup: 70
       containers:
         - name: postgres
-          image: docker.io/library/postgres:16.4-alpine
+          image: docker.io/library/postgres:16.11-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
