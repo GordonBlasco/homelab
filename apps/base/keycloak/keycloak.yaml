@@ -1,0 +1,48 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app: keycloak
+spec:
+  instances: 1
+  image: quay.io/keycloak/keycloak:26.4.7
+  hostname:
+    hostname: keycloak.local
+    strict: true
+    strictBackchannel: true
+    admin: keycloak.local
+  http:
+    httpEnabled: false
+    tlsSecret: keycloak-tls
+  ingress:
+    enabled: true
+    className: nginx
+    tlsSecret: keycloak-tls
+  db:
+    vendor: postgres
+    host: keycloak-postgres
+    port: 5432
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db-secret
+      key: username
+    passwordSecret:
+      name: keycloak-db-secret
+      key: password
+  bootstrapAdmin:
+    user:
+      secret: keycloak-admin-credentials
+  additionalOptions:
+    - name: proxy
+      value: edge
+    - name: hostname-strict-https
+      value: "true"
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1500m
+      memory: 3Gi
