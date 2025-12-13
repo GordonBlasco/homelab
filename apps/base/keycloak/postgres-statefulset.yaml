@@ -18,7 +18,6 @@ spec:
     spec:
       securityContext:
         fsGroup: 70
-        runAsNonRoot: true
       containers:
         - name: postgres
           image: docker.io/library/postgres:16.4-alpine
@@ -26,6 +25,10 @@ spec:
           ports:
             - containerPort: 5432
               name: postgres
+          securityContext:
+            runAsUser: 70
+            runAsGroup: 70
+            fsGroup: 70
           env:
             - name: POSTGRES_DB
               valueFrom:
