@@ -12,7 +12,7 @@ spec:
     hostname: keycloak.local
     strict: true
     strictBackchannel: true
-    admin: keycloak.local
+    admin: https://keycloak.local
   http:
     httpEnabled: false
     tlsSecret: keycloak-tls
