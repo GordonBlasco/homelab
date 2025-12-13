@@ -39,6 +39,7 @@ spec:
       value: edge
     - name: hostname-strict-https
       value: "true"
+  startOptimized: false
   resources:
     requests:
       cpu: 500m
