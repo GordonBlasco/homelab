@@ -17,9 +17,7 @@ spec:
     httpEnabled: false
     tlsSecret: keycloak-tls
   ingress:
-    enabled: true
-    className: traefik
-    tlsSecret: keycloak-tls
+    enabled: false
   db:
     vendor: postgres
     host: keycloak-postgres

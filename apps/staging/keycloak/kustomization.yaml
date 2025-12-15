@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: keycloak
 resources:
   - ../../base/keycloak/
+  - ingress.yaml
 patches:
   - path: keycloak-hostname-patch.yaml
     target:
