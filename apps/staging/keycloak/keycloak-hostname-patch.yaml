@@ -7,5 +7,5 @@ spec:
     hostname: https://keycloak.blascolab.com
     admin: https://keycloak.blascolab.com
   ingress:
-    className: nginx
+    className: traefik
     tlsSecret: keycloak-tls
