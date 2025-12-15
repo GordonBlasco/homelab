@@ -15,3 +15,31 @@ spec:
     loginWithEmailAllowed: true
     registrationAllowed: false
     resetPasswordAllowed: true
+    clients:
+      - clientId: dashy-client
+        name: Dashy
+        description: Homelab landing page protected by oauth2-proxy
+        protocol: openid-connect
+        publicClient: false
+        serviceAccountsEnabled: false
+        directAccessGrantsEnabled: false
+        standardFlowEnabled: true
+        implicitFlowEnabled: false
+        rootUrl: https://dashy.blascolab.com
+        baseUrl: /
+        redirectUris:
+          - https://dashy.blascolab.com/oauth2/callback
+        webOrigins:
+          - https://dashy.blascolab.com
+        fullScopeAllowed: true
+        clientAuthenticatorType: client-secret
+        secret: change-me-super-secret
+        protocolMappers:
+          - name: Audience
+            protocol: openid-connect
+            protocolMapper: oidc-audience-mapper
+            consentRequired: false
+            config:
+              included.client.audience: dashy-client
+              id.token.claim: "true"
+              access.token.claim: "true"

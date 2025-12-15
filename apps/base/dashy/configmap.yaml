@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-config
+  namespace: dashy
+  labels:
+    app: dashy
+    component: ui
+  annotations:
+    dashy.homelab/config: "true"
+data:
+  conf.yml: |
+    pageInfo:
+      title: Homelab Launchpad
+      description: Central place to reach internal services.
+      navLinks:
+        - title: Keycloak
+          path: https://keycloak.blascolab.com/admin/
+    sections:
+      - name: Essentials
+        icon: fas fa-home
+        items:
+          - title: Keycloak
+            description: Authentication provider
+            url: https://keycloak.blascolab.com/admin/
+            icon: https://www.keycloak.org/resources/images/keycloak_icon_256px.png
+          - title: Grafana
+            description: Metrics and dashboards
+            url: https://grafana.blascolab.com/
+            icon: https://grafana.com/static/img/menu/grafana2.svg
+    theme: dashy-docs
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-oauth2-config
+  namespace: dashy
+  labels:
+    app: dashy
+    component: auth
+    managed-by: homelab
+  annotations:
+    description: Base oauth2-proxy settings overridden per environment via Kustomize patches.
+data:
+  issuerUrl: https://keycloak.blascolab.com/realms/homelab
+  redirectUrl: https://dashy.localtest.me/oauth2/callback
+  cookieDomains: dashy.localtest.me
+  whitelistDomains: dashy.localtest.me
+  upstreamUrl: http://dashy:80

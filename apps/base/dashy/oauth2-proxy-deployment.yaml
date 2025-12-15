@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashy-oauth2-proxy
+  namespace: dashy
+  labels:
+    app: dashy
+    component: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashy-oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: dashy-oauth2-proxy
+    spec:
+      containers:
+        - name: oauth2-proxy
+          image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4180
+              name: http
+          env:
+            - name: OAUTH2_PROXY_PROVIDER
+              value: keycloak
+            - name: OAUTH2_PROXY_PROVIDER_DISPLAY_NAME
+              value: Keycloak
+            - name: OAUTH2_PROXY_EMAIL_DOMAINS
+              value: "*"
+            - name: OAUTH2_PROXY_UPSTREAMS
+              valueFrom:
+                configMapKeyRef:
+                  name: dashy-oauth2-config
+                  key: upstreamUrl
+            - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dashy-oauth2-config
+                  key: issuerUrl
+            - name: OAUTH2_PROXY_REDIRECT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dashy-oauth2-config
+                  key: redirectUrl
+            - name: OAUTH2_PROXY_COOKIE_DOMAINS
+              valueFrom:
+                configMapKeyRef:
+                  name: dashy-oauth2-config
+                  key: cookieDomains
+            - name: OAUTH2_PROXY_WHITELIST_DOMAINS
+              valueFrom:
+                configMapKeyRef:
+                  name: dashy-oauth2-config
+                  key: whitelistDomains
+            - name: OAUTH2_PROXY_COOKIE_SECURE
+              value: "true"
+            - name: OAUTH2_PROXY_COOKIE_SAMESITE
+              value: lax
+            - name: OAUTH2_PROXY_HTTP_ADDRESS
+              value: "0.0.0.0:4180"
+            - name: OAUTH2_PROXY_SET_AUTHORIZATION_HEADER
+              value: "true"
+            - name: OAUTH2_PROXY_SET_XAUTHREQUEST
+              value: "true"
+            - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
+              value: "true"
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: dashy-oauth2-secret
+                  key: client_id
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dashy-oauth2-secret
+                  key: client_secret
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dashy-oauth2-secret
+                  key: cookie_secret
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30

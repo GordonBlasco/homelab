@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-oauth2-config
+  namespace: dashy
+data:
+  redirectUrl: https://dashy.blascolab.com/oauth2/callback
+  cookieDomains: dashy.blascolab.com
+  whitelistDomains: dashy.blascolab.com
+  upstreamUrl: http://dashy.dashy.svc.cluster.local
