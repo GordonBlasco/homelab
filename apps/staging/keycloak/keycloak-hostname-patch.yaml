@@ -4,7 +4,7 @@ metadata:
   name: keycloak
 spec:
   hostname:
-    hostname: keycloak.blascolab.com
+    hostname: https://keycloak.blascolab.com
     admin: https://keycloak.blascolab.com
   ingress:
     className: nginx

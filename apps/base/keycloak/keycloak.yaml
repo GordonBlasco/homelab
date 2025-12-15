@@ -9,7 +9,7 @@ spec:
   instances: 1
   image: quay.io/keycloak/keycloak:26.4.7
   hostname:
-    hostname: keycloak.local
+    hostname: https://keycloak.local
     strict: true
     strictBackchannel: true
     admin: https://keycloak.local
