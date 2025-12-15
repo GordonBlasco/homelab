@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashy-oauth2-proxy
+  namespace: dashy
+spec:
+  template:
+    spec:
+      hostAliases:
+        - ip: 192.168.1.100
+          hostnames:
+            - keycloak.blascolab.com

@@ -10,3 +10,7 @@ patches:
     target:
       kind: ConfigMap
       name: dashy-oauth2-config
+  - path: oauth2-proxy-hostalias-patch.yaml
+    target:
+      kind: Deployment
+      name: dashy-oauth2-proxy
