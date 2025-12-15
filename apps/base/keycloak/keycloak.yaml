@@ -14,7 +14,8 @@ spec:
     strictBackchannel: true
     admin: https://keycloak.local
   http:
-    httpEnabled: false
+    httpEnabled: true
+    httpPort: 8080
     tlsSecret: keycloak-tls
   ingress:
     enabled: false
