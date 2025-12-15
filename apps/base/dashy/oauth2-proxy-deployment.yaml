@@ -25,7 +25,7 @@ spec:
               name: http
           env:
             - name: OAUTH2_PROXY_PROVIDER
-              value: keycloak
+              value: oidc
             - name: OAUTH2_PROXY_PROVIDER_DISPLAY_NAME
               value: Keycloak
             - name: OAUTH2_PROXY_EMAIL_DOMAINS
